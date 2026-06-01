@@ -1,0 +1,24 @@
+# PostgreSQL para beterahoy.es (Next en el host; DATABASE_URL en .env)
+# Puerto host: 5437 (5432–5436 ocupados en el VPS de producción típico)
+
+services:
+  db:
+    image: postgres:16
+    container_name: beterahoy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-beterahoy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-beterahoy}
+      POSTGRES_DB: ${POSTGRES_DB:-beterahoy}
+    ports:
+      - "127.0.0.1:5437:5432"
+    volumes:
+      - beterahoy_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U beterahoy -d beterahoy"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  beterahoy_pgdata:

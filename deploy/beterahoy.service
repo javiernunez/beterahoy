@@ -1,0 +1,16 @@
+[Unit]
+Description=beterahoy.es (Next.js)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/beterahoy.es
+Environment=NODE_ENV=production
+EnvironmentFile=-/opt/beterahoy.es/.env
+ExecStart=/usr/bin/npm run start -- -H 127.0.0.1 -p 3002
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
