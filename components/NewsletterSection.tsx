@@ -30,7 +30,7 @@ export function NewsletterSection({ locale, variant = "footer", defaultEmail }: 
 
   return (
     <div>
-      <p className="betera-section-kicker !text-betera-gold/90">{t("footer.newsletter")}</p>
+      <p className="betera-section-kicker !text-betera-lime/90">{t("footer.newsletter")}</p>
       <p className="mt-2 text-sm text-betera-cream/80">{t("footer.newsletterDescription")}</p>
       <NewsletterForm locale={locale} appearance="dark" source="footer" defaultEmail={defaultEmail} />
     </div>

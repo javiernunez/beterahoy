@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Literata, Outfit } from "next/font/google";
+import { Lora, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { AnalyticsListener } from "@/components/AnalyticsListener";
 import { AnalyticsScripts } from "@/components/AnalyticsScripts";
@@ -10,7 +10,7 @@ import { GOOGLE_SITE_VERIFICATION, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from 
 import { getLocaleFromCookie } from "@/lib/i18n-server";
 import { DEFAULT_SITE_KEYWORDS } from "@/lib/seo";
 
-const outfit = Outfit({
+const nunitoSans = Nunito_Sans({
   subsets: ["latin", "latin-ext"],
   display: "swap",
   variable: "--font-sans",
@@ -18,7 +18,7 @@ const outfit = Outfit({
   preload: true,
 });
 
-const literata = Literata({
+const lora = Lora({
   subsets: ["latin", "latin-ext"],
   display: "swap",
   variable: "--font-serif",
@@ -72,8 +72,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const locale = getLocaleFromCookie();
 
   return (
-    <html lang={locale === "val" ? "ca" : "es"} className={`${outfit.variable} ${literata.variable}`}>
-      <body className={`min-h-screen font-sans ${outfit.className}`}>
+    <html lang={locale === "val" ? "ca" : "es"} className={`${nunitoSans.variable} ${lora.variable}`}>
+      <body className={`min-h-screen font-sans ${nunitoSans.className}`}>
         <AnalyticsScripts />
         <AnalyticsListener />
         <div className="flex min-h-screen flex-col">

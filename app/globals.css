@@ -10,15 +10,25 @@
   --betera-cream: #f4faf5;
 }
 
+html {
+  font-size: 17px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+}
+
 body {
-  @apply bg-betera-cream text-betera-ink antialiased;
+  @apply bg-betera-cream text-betera-ink antialiased leading-relaxed;
   background-image:
     radial-gradient(ellipse 100% 70% at 100% 0%, rgba(34, 197, 94, 0.12), transparent 55%),
     radial-gradient(ellipse 80% 50% at 0% 100%, rgba(20, 83, 45, 0.08), transparent 50%);
 }
 
 .prose-article {
-  @apply text-lg text-betera-ink/90;
+  @apply text-xl text-betera-ink/90 leading-relaxed;
 }
 
 .prose-article :where(a[href]) {
@@ -43,7 +53,7 @@ body {
   }
 
   .betera-btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-betera-forest px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-betera-forest-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-betera-leaf;
+    @apply inline-flex items-center justify-center rounded-full bg-betera-forest px-5 py-2.5 text-base font-semibold text-white shadow-sm transition hover:bg-betera-forest-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-betera-leaf;
   }
 
   .betera-card {
@@ -51,15 +61,15 @@ body {
   }
 
   .betera-nav-link {
-    @apply flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-betera-ink/80 transition hover:bg-betera-mist hover:text-betera-forest;
+    @apply flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-base font-medium text-betera-ink/80 transition hover:bg-betera-mist hover:text-betera-forest;
   }
 
   .betera-nav-link-active {
-    @apply bg-betera-forest text-white shadow-sm hover:bg-betera-forest-light hover:text-white;
+    @apply rounded-full bg-betera-forest text-white shadow-sm hover:bg-betera-forest-light hover:text-white;
   }
 
   .betera-section-kicker {
-    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-betera-leaf-dark;
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-betera-leaf-dark;
   }
 }
 

@@ -19,7 +19,7 @@ export async function Footer() {
           <p className="mt-2 text-sm leading-relaxed text-betera-cream/80">{t("footer.description")}</p>
         </div>
         <div>
-          <p className="betera-section-kicker !text-betera-gold/90">{t("footer.links")}</p>
+          <p className="betera-section-kicker !text-betera-lime/90">{t("footer.links")}</p>
           <ul className="mt-3 space-y-1.5 text-sm">
             <li>
               <Link href="/noticias" className="text-betera-cream/90 transition hover:text-white">
@@ -82,7 +82,7 @@ export async function Footer() {
         </div>
         <NewsletterSection locale={locale} variant="footer" defaultEmail={session?.user?.email} />
         <div>
-          <p className="betera-section-kicker !text-betera-gold/90">{t("footer.local")}</p>
+          <p className="betera-section-kicker !text-betera-lime/90">{t("footer.local")}</p>
           <p className="mt-3 text-sm leading-relaxed text-betera-cream/85">
             Bétera · Camp de Túria · Comunitat Valenciana
           </p>

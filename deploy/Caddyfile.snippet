@@ -1,0 +1,13 @@
+# Snippet para el Caddyfile del VPS (mismo patrón que lelianahoy / sabhoy).
+# Copiar al bloque correspondiente en /etc/caddy/Caddyfile y recargar Caddy.
+#
+#   sudo caddy validate --config /etc/caddy/Caddyfile
+#   sudo systemctl reload caddy
+#   sudo journalctl -u caddy -n 50 --no-pager
+#
+# La app Next.js debe escuchar en 127.0.0.1:3002 (beterahoy.service).
+
+www.beterahoy.es, beterahoy.es {
+	encode gzip zstd
+	reverse_proxy 127.0.0.1:3002
+}

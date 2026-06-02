@@ -22,7 +22,7 @@ export async function UserNav({ locale = "es", variant = "default" }: UserNavPro
     : "betera-btn-primary !px-2.5 !py-1";
   const mutedClass = onDark ? "max-w-[10rem] truncate text-betera-cream/75" : "max-w-[10rem] truncate text-betera-ink/60";
   const adminClass = onDark
-    ? "rounded-lg px-2 py-1 text-betera-gold hover:bg-white/10"
+    ? "rounded-full px-2.5 py-1 text-betera-lime hover:bg-white/10"
     : "rounded-lg px-2 py-1 text-betera-forest-light hover:bg-betera-mist";
   const logoutClass = onDark
     ? "rounded-lg px-2 py-1 text-betera-cream/80 hover:bg-white/10"
