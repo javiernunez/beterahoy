@@ -10,7 +10,6 @@ help: ## Muestra esta ayuda
 dev: ## Inicia Next.js en modo desarrollo
 	npm run dev
 
-
 build: ## Genera build de produccion
 	npm run build
 
