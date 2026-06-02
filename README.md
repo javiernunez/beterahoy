@@ -142,29 +142,6 @@ El seed crea:
 - `.github/workflows/ci.yml`: instala, genera Prisma, lint y build.
 - `.github/workflows/deploy-main.yml`: despliegue por SSH al hacer push en `main`, en `/opt/beterahoy.es`.
 
-### Git en el servidor (fetch desde GitHub)
-
-El deploy hace `git fetch origin main` en `/opt/beterahoy.es`. El usuario SSH (`DEPLOY_USER`) necesita:
-
-1. **Host de GitHub en `known_hosts`** (el workflow lo añade en cada deploy; también puedes hacerlo una vez a mano):
-   ```bash
-   ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
-   ```
-2. **Clave de solo lectura (deploy key)** si el repo es privado:
-   ```bash
-   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_github -N "" -C "beterahoy-vps"
-   cat ~/.ssh/id_ed25519_github.pub
-   ```
-   Añade la pública en GitHub → **Settings** → **Deploy keys** (read-only). Luego `~/.ssh/config`:
-   ```
-   Host github.com
-     HostName github.com
-     User git
-     IdentityFile ~/.ssh/id_ed25519_github
-     IdentitiesOnly yes
-   ```
-   Comprueba: `ssh -T git@github.com` y `cd /opt/beterahoy.es && git fetch origin main`.
-
 ### Secrets necesarios para deploy
 
 Configura en GitHub:
@@ -179,13 +156,9 @@ Configura en GitHub:
 
 El workflow **compila en GitHub Actions** y sube un tarball al VPS. En el servidor **no** corre `npm ci` ni `next build` (la app sigue sirviendo hasta el restart final):
 
-1. `cd /opt/beterahoy.es`
-2. `git fetch origin main`, `git clean` (conserva `.env`, `node_modules`, `.next`, `public/media`) y `git checkout -B main origin/main`
-3. Extraer `deploy.tgz` (`.next`, `node_modules`, `public`, etc.) desde `/opt/beterahoy.es/.ci-stage/`
-4. Cargar `/opt/beterahoy.es/.env` si existe; el script aplica por defecto `DATABASE_URL` en el puerto **5437** (ver `docker-compose.yml`).
-5. Si existe `docker-compose.yml`, **`docker compose up -d`**
-6. `npm run prisma:deploy`
-7. `systemctl restart <DEPLOY_SERVICE>.service` (puerto **3002**)
+1. Build en GitHub Actions y subida de `deploy.tgz` a `/opt/beterahoy.es/.ci-stage/`.
+2. En el VPS: extraer el bundle (`.next`, `node_modules`, `scripts/`, `prisma/`, etc.) — **sin `git fetch` en el servidor**.
+3. `scripts/remote-deploy.sh`: `.env`, Postgres, `prisma migrate deploy`, reinicio systemd (puerto **3002**).
 
 `prisma db seed` **no** va en el deploy automático. Ejecutalo a mano **una vez** tras el primer despliegue.
 
