@@ -25,7 +25,7 @@ fi
 tar -xzf "$BUNDLE" -C "$DEPLOY_PATH"
 rm -f "$BUNDLE"
 
-# Tras un rm con sudo, asegurar que deploy posee el nuevo .next
+# Tras rm/tar con sudo, el servicio (User=deploy) debe poder leer todo el árbol
 if sudo -n true 2>/dev/null; then
-  sudo -n chown -R "$(whoami):$(id -gn)" "${DEPLOY_PATH}/.next" 2>/dev/null || true
+  sudo -n chown -R "$(whoami):$(id -gn)" "${DEPLOY_PATH}" 2>/dev/null || true
 fi
