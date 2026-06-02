@@ -201,9 +201,12 @@ Con esto, cada push a `main` despliega automaticamente con los **secrets** confi
 
 ```bash
 sudo cp /opt/beterahoy.es/deploy/beterahoy.service /etc/systemd/system/beterahoy.service
-# Ajusta User/Group si hace falta (mismo usuario que el deploy)
+# User=deploy (mismo usuario SSH del deploy); no ejecutar Next como root
+sudo chown -R deploy:deploy /opt/beterahoy.es
 sudo systemctl daemon-reload
 sudo systemctl enable beterahoy.service
 ```
+
+Si el deploy falla al borrar `.next` (`Permission denied` en `cache/images`), como root: `sudo chown -R deploy:deploy /opt/beterahoy.es`. Opcional: `deploy/sudoers-deploy.snippet` para `sudo` sin contraseña en CI.
 
 El **primer** `systemctl start` puede fallar hasta que existan `node_modules` y `.next` (tras el primer deploy por CI o `make db-init` + build).

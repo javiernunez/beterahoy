@@ -11,6 +11,8 @@ EnvironmentFile=-/opt/beterahoy.es/.env
 ExecStart=/usr/bin/npm run start -- -H 127.0.0.1 -p 3002
 Restart=on-failure
 RestartSec=10
+User=deploy
+Group=deploy
 
 [Install]
 WantedBy=multi-user.target
