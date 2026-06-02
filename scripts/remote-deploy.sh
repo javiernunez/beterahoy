@@ -69,16 +69,8 @@ systemctl_unit() {
   return 1
 }
 
-default_app_port() {
-  case "${SERVICE_NAME}" in
-    lelianahoy) echo 3000 ;;
-    sabhoy) echo 3001 ;;
-    beterahoy) echo 3002 ;;
-    *) echo 3000 ;;
-  esac
-}
-
-DEPLOY_APP_PORT="${DEPLOY_APP_PORT:-$(default_app_port)}"
+# VPS: 3000 lelianahoy | 3001 sermestre | 3002 beterahoy | 3003 sabhoy
+DEPLOY_APP_PORT="${DEPLOY_APP_PORT:-3002}"
 
 restart_app_service() {
   date -u "+[deploy] %Y-%m-%dT%H:%M:%SZ restart ${SERVICE_NAME} (puerto ${DEPLOY_APP_PORT})"
