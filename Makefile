@@ -19,6 +19,7 @@ start: ## Levanta servidor de produccion
 lint: ## Ejecuta linter
 	npm run lint
 
+
 prisma-generate: ## Genera cliente Prisma
 	npm run prisma:generate
 
