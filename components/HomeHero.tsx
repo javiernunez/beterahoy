@@ -8,10 +8,7 @@ type Props = {
 
 export function HomeHero({ isVal }: Props) {
   return (
-    <section
-      className="relative overflow-hidden rounded-3xl border border-betera-forest/20 bg-gradient-to-br from-betera-forest via-[#234d3a] to-betera-forest-light px-6 py-10 text-betera-cream shadow-betera-lg md:px-10 md:py-12"
-      aria-labelledby="home-hero-title"
-    >
+    <section className="relative overflow-hidden rounded-3xl border border-betera-forest/20 bg-gradient-to-br from-betera-forest via-[#234d3a] to-betera-forest-light px-6 py-10 text-betera-cream shadow-betera-lg md:px-10 md:py-12">
       <div
         className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-betera-leaf/20 blur-3xl"
         aria-hidden
@@ -22,7 +19,7 @@ export function HomeHero({ isVal }: Props) {
       />
 
       <p className="betera-section-kicker !text-betera-lime/90">{isVal ? "Camp de Túria · València" : "Camp de Túria · Valencia"}</p>
-      <h1 id="home-hero-title" className="mt-2 max-w-2xl font-serif text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
+      <h1 className="mt-2 max-w-2xl font-serif text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
         {isVal ? "El teu portal a " : "Tu portal en "}
         <span className="text-betera-lime">Bétera</span>
       </h1>
