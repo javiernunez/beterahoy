@@ -39,11 +39,18 @@ if [ -f docker-compose.yml ] && echo "$DATABASE_URL" | grep -qE ':(5434|5435)/';
   exit 1
 fi
 
+DB_CONTAINER="beterahoy-db"
+
 if [ -f docker-compose.yml ]; then
-  date -u "+[deploy] %Y-%m-%dT%H:%M:%SZ docker compose up + espera pg_isready"
-  docker compose up -d
+  date -u "+[deploy] %Y-%m-%dT%H:%M:%SZ postgres (${DB_CONTAINER}) + espera pg_isready"
+  if docker container inspect "$DB_CONTAINER" >/dev/null 2>&1; then
+    date -u "+[deploy] ${DB_CONTAINER} ya existe; arrancar si estaba parado"
+    docker start "$DB_CONTAINER" >/dev/null 2>&1 || true
+  else
+    docker compose up -d
+  fi
   for i in $(seq 1 90); do
-    if docker exec beterahoy-db pg_isready -U "${POSTGRES_USER:-beterahoy}" -d "${POSTGRES_DB:-beterahoy}" 2>/dev/null; then
+    if docker exec "$DB_CONTAINER" pg_isready -U "${POSTGRES_USER:-beterahoy}" -d "${POSTGRES_DB:-beterahoy}" 2>/dev/null; then
       break
     fi
     if [ "$i" -ge 90 ]; then

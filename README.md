@@ -181,7 +181,7 @@ El workflow **compila en GitHub Actions** y sube un tarball al VPS. En el servid
 
 1. `cd /opt/beterahoy.es`
 2. `git fetch origin main`, `git clean` (conserva `.env`, `node_modules`, `.next`, `public/media`) y `git checkout -B main origin/main`
-3. Extraer `deploy.tgz` (`.next`, `node_modules`, `public`, etc.) desde `/var/tmp/beterahoy-ci/`
+3. Extraer `deploy.tgz` (`.next`, `node_modules`, `public`, etc.) desde `/opt/beterahoy.es/.ci-stage/`
 4. Cargar `/opt/beterahoy.es/.env` si existe; el script aplica por defecto `DATABASE_URL` en el puerto **5437** (ver `docker-compose.yml`).
 5. Si existe `docker-compose.yml`, **`docker compose up -d`**
 6. `npm run prisma:deploy`
