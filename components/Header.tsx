@@ -21,7 +21,7 @@ export async function Header() {
             <Image
               src="/branding/logo-beterahoy.png"
               alt={SITE_NAME}
-              width={427}
+              width={437}
               height={120}
               priority
               unoptimized

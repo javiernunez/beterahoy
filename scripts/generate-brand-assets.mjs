@@ -1,5 +1,5 @@
 /**
- * Genera logo optimizado y favicons a partir del logo sabhoy.
+ * Genera logo de cabecera y favicons a partir de assets/logo-source.png.
  * Uso: node scripts/generate-brand-assets.mjs [ruta-logo-origen]
  */
 import sharp from "sharp";
@@ -16,60 +16,81 @@ const source = process.argv[2] ?? defaultSource;
 const brandingDir = path.join(root, "public", "branding");
 const iconsDir = path.join(root, "public", "icons");
 
-/** Rosetón simplificado del logo (escala bien a 16–32 px). */
-const FAVICON_SVG = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="sabhoy">
-  <rect width="32" height="32" rx="7" fill="#0b4f84"/>
-  <circle cx="16" cy="16" r="11.5" fill="#d1e3f3"/>
-  <circle cx="16" cy="16" r="9.5" fill="none" stroke="#4a86c5" stroke-width="1.2"/>
-  <g fill="#0b4f84" stroke="#0b4f84" stroke-width="0.4">
-    <ellipse cx="16" cy="16" rx="3.2" ry="8.5"/>
-    <ellipse cx="16" cy="16" rx="8.5" ry="3.2"/>
-    <ellipse cx="16" cy="16" rx="6.2" ry="6.2" transform="rotate(45 16 16)"/>
-    <circle cx="16" cy="16" r="2.1" fill="#4a86c5" stroke="none"/>
-  </g>
-</svg>`;
+/** Fondo del favicon (crema del sitio, coherente con cabecera). */
+const FAVICON_BG = "#f4faf5";
+
+/** Proporción aproximada del icono castillo respecto al logo horizontal recortado. */
+const CASTLE_WIDTH_RATIO = 0.42;
 
 const FAVICON_SIZES = [16, 32, 48, 64, 96, 128, 180, 192, 256, 512];
 
-async function writeLogo() {
-  const trimmed = await sharp(source).trim({ threshold: 12 }).png({ compressionLevel: 9 }).toBuffer();
-  const meta = await sharp(trimmed).metadata();
-  const logoHeight = 120;
-  const logoWidth = Math.round((meta.width / meta.height) * logoHeight);
+const LOGO_HEIGHT = 120;
 
-  await sharp(trimmed)
-    .resize(logoWidth, logoHeight, { fit: "inside", withoutEnlargement: false })
+async function trimLogoBuffer(input) {
+  return sharp(input).trim({ threshold: 12 }).png({ compressionLevel: 9 }).toBuffer();
+}
+
+async function extractCastleIcon(trimmedBuffer) {
+  const meta = await sharp(trimmedBuffer).metadata();
+  const castleWidth = Math.min(meta.width, Math.round(meta.width * CASTLE_WIDTH_RATIO));
+
+  const castle = await sharp(trimmedBuffer)
+    .extract({ left: 0, top: 0, width: castleWidth, height: meta.height })
+    .trim({ threshold: 12 })
+    .png()
+    .toBuffer();
+
+  const castleMeta = await sharp(castle).metadata();
+  const side = Math.max(castleMeta.width, castleMeta.height);
+  const left = Math.floor((side - castleMeta.width) / 2);
+  const top = Math.floor((side - castleMeta.height) / 2);
+
+  return sharp({
+    create: {
+      width: side,
+      height: side,
+      channels: 4,
+      background: FAVICON_BG,
+    },
+  })
+    .composite([{ input: castle, left, top }])
+    .png()
+    .toBuffer();
+}
+
+async function writeLogo(trimmedBuffer) {
+  const meta = await sharp(trimmedBuffer).metadata();
+  const logoWidth = Math.round((meta.width / meta.height) * LOGO_HEIGHT);
+
+  await sharp(trimmedBuffer)
+    .resize(logoWidth, LOGO_HEIGHT, { fit: "inside", withoutEnlargement: false })
     .png({ compressionLevel: 9, adaptiveFiltering: true })
     .toFile(path.join(brandingDir, "logo-beterahoy.png"));
 
-  return { logoWidth, logoHeight };
+  return { logoWidth, logoHeight: LOGO_HEIGHT };
 }
 
-async function writeFavicons() {
-  const svgBuffer = Buffer.from(FAVICON_SVG);
-
-  await writeFile(path.join(brandingDir, "favicon.svg"), FAVICON_SVG);
+async function writeFavicons(iconBuffer) {
+  await writeFile(path.join(brandingDir, "favicon.svg"), await buildFaviconSvg(iconBuffer));
 
   const pngBySize = {};
   for (const size of FAVICON_SIZES) {
     const out = path.join(iconsDir, `favicon-${size}x${size}.png`);
-    await sharp(svgBuffer, { density: 384 })
-      .resize(size, size)
+    await sharp(iconBuffer)
+      .resize(size, size, { fit: "contain", background: FAVICON_BG })
       .png({ compressionLevel: 9 })
       .toFile(out);
     pngBySize[size] = out;
   }
 
-  // Next.js metadata (app/)
-  await sharp(svgBuffer, { density: 384 }).resize(512, 512).png().toFile(path.join(root, "app", "icon.png"));
-  await sharp(svgBuffer, { density: 384 }).resize(180, 180).png().toFile(path.join(root, "app", "apple-icon.png"));
+  await sharp(iconBuffer).resize(512, 512).png().toFile(path.join(root, "app", "icon.png"));
+  await sharp(iconBuffer).resize(180, 180).png().toFile(path.join(root, "app", "apple-icon.png"));
 
   const icoSizes = [16, 32, 48];
   const icoImages = await Promise.all(
     icoSizes.map(async (size) => ({
       size,
-      buffer: await sharp(svgBuffer).resize(size, size).png().toBuffer(),
+      buffer: await sharp(iconBuffer).resize(size, size).png().toBuffer(),
     })),
   );
 
@@ -78,6 +99,16 @@ async function writeFavicons() {
   }
 
   return pngBySize;
+}
+
+/** SVG embebido para referencia (p. ej. PWA); generado desde el castillo rasterizado. */
+async function buildFaviconSvg(iconBuffer) {
+  const pngBase64 = (await sharp(iconBuffer).resize(128, 128).png({ compressionLevel: 9 }).toBuffer()).toString("base64");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="beterahoy">
+  <rect width="128" height="128" fill="${FAVICON_BG}"/>
+  <image href="data:image/png;base64,${pngBase64}" width="128" height="128"/>
+</svg>`;
 }
 
 /** ICO con varias resoluciones (formato Windows estándar). */
@@ -135,8 +166,10 @@ async function main() {
   await mkdir(brandingDir, { recursive: true });
   await mkdir(iconsDir, { recursive: true });
 
-  const { logoWidth, logoHeight } = await writeLogo();
-  await writeFavicons();
+  const trimmed = await trimLogoBuffer(source);
+  const iconBuffer = await extractCastleIcon(trimmed);
+  const { logoWidth, logoHeight } = await writeLogo(trimmed);
+  await writeFavicons(iconBuffer);
 
   console.log(JSON.stringify({ ok: true, logoWidth, logoHeight, source }, null, 2));
 }
