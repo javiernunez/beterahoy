@@ -13,9 +13,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: sabhoy
-          POSTGRES_PASSWORD: sabhoy
-          POSTGRES_DB: sabhoy
+          POSTGRES_USER: beterahoy
+          POSTGRES_PASSWORD: beterahoy
+          POSTGRES_DB: beterahoy
         ports:
           - 5432:5432
         options: >-
@@ -24,7 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      DATABASE_URL: postgresql://sabhoy:sabhoy@127.0.0.1:5432/sabhoy
+      DATABASE_URL: postgresql://beterahoy:beterahoy@127.0.0.1:5432/beterahoy
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          DATABASE_URL: postgresql://sabhoy:sabhoy@127.0.0.1:5432/sabhoy
+          DATABASE_URL: postgresql://beterahoy:beterahoy@127.0.0.1:5432/beterahoy
           NEXTAUTH_SECRET: "ci-build-secret-min-32-chars-xxxxxxxx"
           NEXTAUTH_URL: "https://www.beterahoy.es"
           NEXT_PUBLIC_SITE_URL: "https://www.beterahoy.es"

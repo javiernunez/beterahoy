@@ -152,7 +152,7 @@ El deploy hace `git fetch origin main` en `/opt/beterahoy.es`. El usuario SSH (`
    ```
 2. **Clave de solo lectura (deploy key)** si el repo es privado:
    ```bash
-   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_github -N "" -C "sabhoy-vps"
+   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_github -N "" -C "beterahoy-vps"
    cat ~/.ssh/id_ed25519_github.pub
    ```
    Añade la pública en GitHub → **Settings** → **Deploy keys** (read-only). Luego `~/.ssh/config`:
@@ -173,20 +173,19 @@ Configura en GitHub:
 - `DEPLOY_USER`: usuario SSH con permisos en `/opt/beterahoy.es`.
 - `DEPLOY_SSH_KEY`: clave privada SSH.
 - `DEPLOY_PORT` (opcional): puerto SSH (por defecto `22`).
-- `DEPLOY_SERVICE` (opcional): nombre del servicio systemd sin `.service` (por defecto `sabhoy`).
+- `DEPLOY_SERVICE` (opcional): nombre del servicio systemd sin `.service` (por defecto `beterahoy`).
 
 ### Deploy automatico (sin entrar al server)
 
-El workflow remoto ejecuta:
+El workflow **compila en GitHub Actions** y sube un tarball al VPS. En el servidor **no** corre `npm ci` ni `next build` (la app sigue sirviendo hasta el restart final):
 
 1. `cd /opt/beterahoy.es`
 2. `git fetch origin main`, `git clean` (conserva `.env`, `node_modules`, `.next`, `public/media`) y `git checkout -B main origin/main`
-3. Cargar `/opt/beterahoy.es/.env` si existe; el script aplica por defecto `DATABASE_URL` en el puerto **5436** (ver `docker-compose.yml`).
-4. Si existe `docker-compose.yml`, **`docker compose up -d`**.
-5. `npm ci --include=dev`
-6. `npm run prisma:deploy` (Prisma 5 del lockfile, no `npx prisma` suelto)
-7. `npm run build`
-8. `systemctl restart <DEPLOY_SERVICE>.service`
+3. Extraer `deploy.tgz` (`.next`, `node_modules`, `public`, etc.) desde `/var/tmp/beterahoy-ci/`
+4. Cargar `/opt/beterahoy.es/.env` si existe; el script aplica por defecto `DATABASE_URL` en el puerto **5437** (ver `docker-compose.yml`).
+5. Si existe `docker-compose.yml`, **`docker compose up -d`**
+6. `npm run prisma:deploy`
+7. `systemctl restart <DEPLOY_SERVICE>.service` (puerto **3002**)
 
 `prisma db seed` **no** va en el deploy automático. Ejecutalo a mano **una vez** tras el primer despliegue.
 
@@ -194,7 +193,7 @@ El workflow remoto ejecuta:
 
 ```bash
 cp .env.example .env   # editar: NEXTAUTH_SECRET, ADMIN_EMAILS, contraseñas
-# DATABASE_URL con puerto 5436 (5435 = sermestre en este VPS)
+# DATABASE_URL con puerto 5437 (5434 lelianahoy, 5436 sabhoy en el VPS típico)
 docker compose up -d
 make db-init           # npm ci + migrate + seeds (o los pasos de abajo)
 make deploy            # build + systemd
@@ -212,7 +211,7 @@ npm run prisma:seed:evergreen
 `.env` de ejemplo en producción:
 
 ```bash
-DATABASE_URL="postgresql://sabhoy:sabhoy@127.0.0.1:5437/sabhoy"
+DATABASE_URL="postgresql://beterahoy:beterahoy@127.0.0.1:5437/beterahoy"
 NEXT_PUBLIC_SITE_URL="https://www.beterahoy.es"
 NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 NEXTAUTH_URL="https://www.beterahoy.es"
@@ -223,16 +222,15 @@ ADMIN_EMAILS="tu@correo.com"
 
 **Node en el server:** el proyecto se ha probado con Node 20+; en el server con Node 18 veras avisos `EBADENGINE` en `npm ci`. Recomendable: instalar Node 20 LTS (nvm o paquetes oficiales).
 
-Con esto, cada push a `main` despliega automaticamente con los **secrets** configurados y, **una sola vez en el servidor**, la unidad systemd `sabhoy.service`.
+Con esto, cada push a `main` despliega automaticamente con los **secrets** configurados y, **una sola vez en el servidor**, la unidad systemd `beterahoy.service`.
 
 ### Crear el servicio systemd (una vez)
 
 ```bash
-sudo cp /opt/beterahoy.es/deploy/sabhoy.service /etc/systemd/system/sabhoy.service
-# Ajusta User/Group y puerto (3001 por defecto) si hace falta
+sudo cp /opt/beterahoy.es/deploy/beterahoy.service /etc/systemd/system/beterahoy.service
+# Ajusta User/Group si hace falta (mismo usuario que el deploy)
 sudo systemctl daemon-reload
-sudo systemctl enable sabhoy.service
+sudo systemctl enable beterahoy.service
 ```
 
-El **primer** `systemctl start` puede fallar hasta que existan `node_modules` y `.next` (tras `make deploy` o `make db-init` + build).
-# beterahoy
+El **primer** `systemctl start` puede fallar hasta que existan `node_modules` y `.next` (tras el primer deploy por CI o `make db-init` + build).
