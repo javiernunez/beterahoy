@@ -26,10 +26,10 @@ jobs:
       DEPLOY_PORT: ${{ secrets.DEPLOY_PORT || vars.DEPLOY_PORT || '22' }}
       DEPLOY_SERVICE: ${{ secrets.DEPLOY_SERVICE || vars.DEPLOY_SERVICE || 'beterahoy' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
@@ -40,7 +40,8 @@ jobs:
       - name: Pack deploy bundle (artefacto para el VPS)
         run: |
           tar -czf deploy.tgz \
-            .next node_modules public package.json package-lock.json prisma \
+            --exclude='.next/cache' \
+            .next node_modules public package.json package-lock.json prisma lib \
             scripts deploy docker-compose.yml
           chmod 644 deploy.tgz
       - name: Validate deploy configuration
