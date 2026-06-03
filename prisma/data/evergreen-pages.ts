@@ -122,15 +122,29 @@ València i Burjassot. [Transport](/transporte-publico-betera).`,
     isHighlighted: true,
     content: `# Educación en Bétera
 
-- **CEIP Lloma del Mas** — infantil y primaria
-- **CEIP Mas Camarena** — zona sur / urbanización
-- **IES Bétera** — ESO y Bachillerato
-- **Caxton College** — privado bilingüe de referencia en la comarca
+Bétera cuenta con centros públicos de infantil, primaria y secundaria, además de referencias concertadas y privadas en la comarca. Consulta la ficha de cada centro en el directorio inferior.
 
-Listado detallado en [/colegios](/colegios).`,
-    contentVal: `# Educació
+## Escolarización y matrícula
 
-CEIP Lloma del Mas, CEIP Mas Camarena, IES Bétera.`,
+El proceso de **admisión para centros públicos y concertados** lo gestiona la Conselleria de Educación de la Generalitat Valenciana. El plazo suele abrirse entre **marzo y abril** de cada año.
+
+- 🌐 Portal de admisión: [ceice.gva.es/es/web/admision-alumnado](https://ceice.gva.es/es/web/admision-alumnado)
+- 📞 Información educación GVA: **012**
+
+## Más información
+
+- [Información útil](/informacion-util)`,
+    contentVal: `# Educació a Bétera
+
+Col·legis públics d'infantil i primària, IES de secundària i referències privades a la comarca. Consulta la fitxa de cada centre al directori inferior.
+
+## Escolarització
+
+Portal d'admissió GVA: [ceice.gva.es/es/web/admision-alumnado](https://ceice.gva.es/es/web/admision-alumnado)
+
+## Més informació
+
+- [Informació útil](/informacion-util)`,
   },
   {
     slug: "transporte-publico-betera",
