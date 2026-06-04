@@ -175,6 +175,32 @@ Siguen vigentes la consulta a `/docs/contexto-betera`, la **coherencia** con lo 
 
 ---
 
+# PUBLICAR BORRADOR EN PRODUCCIÓN (OBLIGATORIO)
+
+Cuando el encargo sea **generar/redactar una noticia**, después del `.md` en `_output` debes **crear el borrador en el CMS de producción** para que solo haya que revisar en el admin.
+
+1. Extrae del paquete los campos web (sin Instagram/Facebook/SEO del post social).
+2. Arma un JSON con al menos:
+   - `title`, `content` (castellano, Markdown del bloque **Web — Cuerpo**)
+   - `titleVal`, `contentVal` (valencià, bloque **Web — Cos**)
+   - `summary`, `summaryVal` (entradillas)
+   - `category`: `GENERAL`, `POLITICA_LOCAL`, `SUCESOS`, `CULTURA`, `DEPORTE` o `ELECCIONES_2027` según el tema
+   - `isHero`: `false` salvo petición explícita
+3. Desde la raíz del monorepo (`/var/www/turiahoy`):
+
+```bash
+node scripts/publish-news-draft.mjs beterahoy.es /ruta/al/payload.json
+```
+
+4. El script llama a **`POST https://www.beterahoy.es/api/news`** con **`status: draft`**. Token: en el VPS `/opt/beterahoy.es/.env`; en **Cursor local**, copia el token a **`.cursor/secrets.env`** (`BETERAHOY_NEWS_API_TOKEN`, ver `secrets.env.example`). No lo pidas en el chat.
+5. Responde al usuario con el **`editUrl`** (`/admin/noticias/{id}`). El paquete `_output` y redes (Instagram, etc.) siguen en el `.md` para copiar si hace falta.
+
+**No publicar** (`status: published`) salvo que el usuario lo pida explícitamente.
+
+Si la API devuelve error (token ausente, 401, validación), conserva el `.md` y explica cómo completar a mano en `/admin/noticias/nuevo`.
+
+---
+
 # REGLAS PARA CADA CAMPO
 
 ## Web — Titular (castellano y valencià)
@@ -204,10 +230,9 @@ También puedes **mezclar HTML editorial** en bloques separados por línea en bl
 - En el **mismo párrafo**, si aparece alguna etiqueta como `<em>` o `<a href="…">`, también se procesan **`**negrita**`, enlaces `[texto](url)` y `![](imagen)`** antes del saneado; para *cursiva* usa `<em>` en esos fragmentos (evita `*cursiva*` mezclada con HTML).
 - Los **iframes** solo se permiten de dominios de embed habituales (YouTube, Vimeo, Dailymotion, etc.).
 
-### Pegar en el admin (`/admin/noticias`)
+### Admin (`/admin/noticias`) — solo si falla la API
 
-- Copia **solo** el contenido bajo los encabezados **Web — Cuerpo (castellano, Markdown)** o **Web — Cos (valencià, Markdown)** (desde el primer `#` del artículo hasta justo antes del siguiente `---`), con **saltos de línea reales**.
-- El campo **cuerpo** del admin conviene abrirlo en **«Código fuente (Markdown)»** para pegar tal cual; si solo pegas en modo enriquecido, **Markdown no se reinterpreta**.
+Lo habitual es el borrador vía API (apartado anterior). Si hubo que crear a mano: copia **solo** **Web — Cuerpo** o **Web — Cos** en **«Código fuente (Markdown)»**; si solo pegas en modo enriquecido, **Markdown no se reinterpreta**.
 
 Si una cita corta en bloque es imprescindible, **solo una**. Los enlaces deben seguir la regla de **texto ancla contextual** (véase CLARIDAD PRIMERO): nunca «Lo recoge [marca](url)» como único recurso cuando enlaces a una pieza nuestra ya publicada.
 
