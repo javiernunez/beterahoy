@@ -68,6 +68,10 @@ body {
     @apply rounded-full bg-betera-forest text-white shadow-sm hover:bg-betera-forest-light hover:text-white;
   }
 
+  .betera-nav-link-active svg {
+    @apply !text-white;
+  }
+
   .betera-section-kicker {
     @apply text-xs font-bold uppercase tracking-[0.16em] text-betera-leaf-dark;
   }

@@ -30,6 +30,40 @@ async function trimLogoBuffer(input) {
   return sharp(input).trim({ threshold: 12 }).png({ compressionLevel: 9 }).toBuffer();
 }
 
+/**
+ * Convierte fondos claros (blanco / crema del JPEG) en transparencia para la cabecera.
+ */
+async function removeLightBackground(input) {
+  const { data, info } = await sharp(input)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const pixels = data;
+  const { width, height } = info;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      const min = Math.min(r, g, b);
+      const max = Math.max(r, g, b);
+      const creamish = Math.abs(r - 244) + Math.abs(g - 250) + Math.abs(b - 245) < 36;
+      if (min >= 232 || (max - min < 18 && min >= 220) || creamish) {
+        pixels[i + 3] = 0;
+      }
+    }
+  }
+
+  return sharp(Buffer.from(pixels), {
+    raw: { width, height, channels: 4 },
+  })
+    .png({ compressionLevel: 9, adaptiveFiltering: true })
+    .toBuffer();
+}
+
 async function extractCastleIcon(trimmedBuffer) {
   const meta = await sharp(trimmedBuffer).metadata();
   const castleWidth = Math.min(meta.width, Math.round(meta.width * CASTLE_WIDTH_RATIO));
@@ -59,10 +93,11 @@ async function extractCastleIcon(trimmedBuffer) {
 }
 
 async function writeLogo(trimmedBuffer) {
-  const meta = await sharp(trimmedBuffer).metadata();
+  const transparent = await removeLightBackground(trimmedBuffer);
+  const meta = await sharp(transparent).metadata();
   const logoWidth = Math.round((meta.width / meta.height) * LOGO_HEIGHT);
 
-  await sharp(trimmedBuffer)
+  await sharp(transparent)
     .resize(logoWidth, LOGO_HEIGHT, { fit: "inside", withoutEnlargement: false })
     .png({ compressionLevel: 9, adaptiveFiltering: true })
     .toFile(path.join(brandingDir, "logo-beterahoy.png"));
