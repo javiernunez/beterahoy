@@ -121,6 +121,15 @@ node ../scripts/publish-news-draft.mjs beterahoy.es /ruta/payload.json
 
 **Listado (GET /api/news)**: ahora es público; si quisieras ocultarlo, se puede añadir el mismo token en otra iteración.
 
+### Comercios (directorio local)
+
+Generador: `/generators/commerce-generator.md`. API: `POST/PATCH /api/comercios` (mismo token que noticias).
+
+```bash
+TURIAHOY_ENV_FILE=/tmp/prod.env node ../scripts/publish-commerce.mjs beterahoy.es /tmp/comercio.json
+node ../scripts/upload-news-image.mjs beterahoy.es /ruta/foto.jpg
+```
+
 ## Arranque local
 
 Con PostgreSQL ya levantado (`make db-up`):
