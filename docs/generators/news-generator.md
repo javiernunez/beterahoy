@@ -2,4 +2,5 @@
 
 Instrucciones compartidas: [`/generators/news-generator.md`](../../../generators/news-generator.md)
 
-Contexto local Bétera: `beterahoy.es/docs/contexto-betera/`
+- **Rutas internas (enlazar desde noticias):** [`../rutas-internas.md`](../rutas-internas.md)
+- **Contexto local Bétera:** [`../contexto-betera/`](../contexto-betera/README.md)

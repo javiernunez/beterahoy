@@ -8,6 +8,7 @@ Archivo de **contexto editorial** para redactar noticias sobre Bétera (Camp de 
 - Criterio: **hechos comprobables** primero; declaraciones públicas y análisis mediático, claramente separados.
 - Formato estándar de cada ficha: Resumen → Cronología → Hechos → Personas → Entidades → Situación actual → Líneas futuras → Fuentes.
 - Enlaces internos con **rutas relativas** desde cada documento.
+- **Enlaces desde noticias publicadas:** consultar [Rutas internas (web pública)](rutas-internas.md) antes de redactar.
 
 ## Índice principal — Contexto Bétera
 
@@ -29,7 +30,8 @@ Archivo de **contexto editorial** para redactar noticias sobre Bétera (Camp de 
 | Carpeta | Uso |
 |---------|-----|
 | [archive/politica-leliana/](archive/politica-leliana/README.md) | Archivo político de l'Eliana (referencia de formato; **no** mezclar hechos de Bétera) |
-| [generators/](generators/news-generator.md) | Instrucciones del generador de noticias |
+| [rutas-internas.md](rutas-internas.md) | Secciones públicas para enlazar desde noticias |
+| [generators/](generators/news-generator.md) | Generadores de noticias y [comercios](generators/commerce-generator.md) |
 | [marketing/](marketing/editorial-calendar-8-weeks.md) | Calendario y KPIs de marketing |
 
 ## Convenciones
