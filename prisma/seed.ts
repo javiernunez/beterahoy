@@ -1,4 +1,5 @@
 import { PrismaClient, ArticleCategory } from "@prisma/client";
+import { seedCommerceRootCategories } from "../lib/seed-commerce-categories";
 
 const prisma = new PrismaClient();
 
@@ -19,22 +20,6 @@ type CategorySeed = {
 };
 
 const BASE_DIRECTORY_CATEGORIES: CategorySeed[] = [
-  {
-    kind: "COMMERCE",
-    name: "Restaurante",
-    nameVal: "Restaurant",
-    children: [
-      { name: "Mediterranea", nameVal: "Mediterrania" },
-      { name: "Comida rapida", nameVal: "Menjar rapid" },
-      { name: "Bar", nameVal: "Bar" },
-    ],
-  },
-  {
-    kind: "COMMERCE",
-    name: "Tienda",
-    nameVal: "Tenda",
-    children: [{ name: "Supermercado", nameVal: "Supermercat" }],
-  },
   {
     kind: "SPORT",
     name: "Deporte",
@@ -102,6 +87,7 @@ async function upsertDirectoryCategory(
 }
 
 async function seedDirectoryCategories() {
+  await seedCommerceRootCategories();
   for (const root of BASE_DIRECTORY_CATEGORIES) {
     const parent = await upsertDirectoryCategory(root.kind, root.name, root.nameVal ?? null, null);
     for (const child of root.children ?? []) {
