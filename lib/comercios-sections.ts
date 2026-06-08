@@ -1,55 +1,118 @@
+export type CommerceSectionSlug =
+  | "restaurantes"
+  | "tiendas"
+  | "salud"
+  | "belleza"
+  | "gimnasios"
+  | "servicios"
+  | "automoviles"
+  | "tecnologia";
+
 export type CommerceSectionConfig = {
-  slug: "restaurantes" | "tiendas" | "gimnasios";
+  slug: CommerceSectionSlug;
   labelEs: string;
   labelVal: string;
   icon: string;
-  categoryHints: string[];
+  /** Nombres exactos de categorías raíz COMMERCE (`name` en castellano). */
+  categoryNames: string[];
+  descriptionEs: string;
+  descriptionVal: string;
 };
 
 export const COMMERCE_SECTIONS: CommerceSectionConfig[] = [
   {
     slug: "restaurantes",
-    labelEs: "Restaurantes",
-    labelVal: "Restaurants",
+    labelEs: "Hostelería",
+    labelVal: "Hostaleria",
     icon: "🍽️",
-    categoryHints: ["restaurante", "restaurantes", "hosteleria", "hostelería", "hostaleria"],
+    categoryNames: ["Hostelería"],
+    descriptionEs: "Bares, restaurantes, cafeterías y taperías de Bétera.",
+    descriptionVal: "Bars, restaurants, cafeteries i taperies de Bétera.",
   },
   {
     slug: "tiendas",
     labelEs: "Tiendas",
     labelVal: "Botigues",
     icon: "🛍️",
-    categoryHints: [
-      "tienda",
-      "tiendas",
-      "comercio",
-      "comercios",
-      "botiga",
-      "botigues",
-      "alimentacion",
-      "alimentación",
-      "alimentacio",
-      "moda",
-      "multitienda",
-      "multibotiga",
-      "electrodomestic",
-      "papeleria",
-      "papereria",
-      "decoracion",
-      "decoració",
-      "florister",
-      "ferreter",
-      "drogueria",
-      "artesania",
-      "artesanía",
+    categoryNames: [
+      "Alimentación",
+      "Moda y complementos",
+      "Multitienda",
+      "Electrodomésticos",
+      "Papelería y quioscos",
+      "Decoración e interiorismo",
+      "Floristerías",
+      "Ferreterías",
+      "Droguería y perfumería",
+      "Artesanía",
+      "Mascotas",
     ],
+    descriptionEs: "Comercios de proximidad, moda, hogar y alimentación.",
+    descriptionVal: "Comerços de proximitat, moda, llar i alimentació.",
+  },
+  {
+    slug: "salud",
+    labelEs: "Salud",
+    labelVal: "Salut",
+    icon: "🏥",
+    categoryNames: ["Salud y Bienestar", "Farmacias"],
+    descriptionEs: "Farmacias, clínicas, fisioterapia y bienestar.",
+    descriptionVal: "Farmàcies, clíniques, fisioteràpia i benestar.",
+  },
+  {
+    slug: "belleza",
+    labelEs: "Belleza",
+    labelVal: "Bellesa",
+    icon: "💇",
+    categoryNames: ["Belleza", "Tatuajes"],
+    descriptionEs: "Peluquerías, estética y cuidado personal.",
+    descriptionVal: "Perruqueries, estètica i cura personal.",
   },
   {
     slug: "gimnasios",
-    labelEs: "Gimnasios",
-    labelVal: "Gimnasos",
+    labelEs: "Deporte",
+    labelVal: "Esport",
     icon: "🏋️",
-    categoryHints: ["gimnasio", "gimnasios", "fitness", "entrenamiento", "gym", "deporte", "deportes", "esport", "esports"],
+    categoryNames: ["Deportes"],
+    descriptionEs: "Gimnasios, tiendas deportivas y actividades físicas.",
+    descriptionVal: "Gimnasos, botigues esportives i activitat física.",
+  },
+  {
+    slug: "servicios",
+    labelEs: "Servicios",
+    labelVal: "Serveis",
+    icon: "📋",
+    categoryNames: [
+      "Gestorías",
+      "Seguros",
+      "Inmobiliaria",
+      "Construcción y servicios",
+      "Servicios agrícolas",
+      "Educación",
+      "Autoescuelas",
+      "Otros servicios",
+      "Entidades bancarias",
+    ],
+    descriptionEs: "Profesionales, gestorías, academias y otros servicios locales.",
+    descriptionVal: "Professionals, gestories, acadèmies i altres serveis locals.",
+  },
+  {
+    slug: "automoviles",
+    labelEs: "Automóviles",
+    labelVal: "Automòbils",
+    icon: "🚗",
+    categoryNames: ["Automóviles"],
+    descriptionEs: "Talleres, concesionarios y servicios del motor.",
+    descriptionVal: "Tallers, concessionaris i serveis del motor.",
+  },
+  {
+    slug: "tecnologia",
+    labelEs: "Tecnología",
+    labelVal: "Tecnologia",
+    icon: "💻",
+    categoryNames: ["Informática", "Telefonía", "Internet", "Comunicación", "Imprenta y grafismo"],
+    descriptionEs: "Informática, telefonía, internet y comunicación.",
+    descriptionVal: "Informàtica, telefonia, internet i comunicació.",
   },
 ];
 
@@ -61,15 +124,21 @@ function normalize(value: string): string {
     .trim();
 }
 
-export function isCommerceSectionSlug(value: string): value is CommerceSectionConfig["slug"] {
+export function isCommerceSectionSlug(value: string): value is CommerceSectionSlug {
   return COMMERCE_SECTIONS.some((section) => section.slug === value);
 }
 
-export function getCommerceSectionConfig(slug: CommerceSectionConfig["slug"]) {
+export function getCommerceSectionConfig(slug: CommerceSectionSlug) {
   return COMMERCE_SECTIONS.find((section) => section.slug === slug);
 }
 
-export function matchesCommerceSection(categoryName: string, section: CommerceSectionConfig): boolean {
-  const base = normalize(categoryName);
-  return section.categoryHints.some((hint) => base.includes(normalize(hint)));
+export function sectionCategoryNameSet(section: CommerceSectionConfig): Set<string> {
+  return new Set(section.categoryNames.map((name) => normalize(name)));
+}
+
+export function categoryMatchesSection(
+  categoryName: string,
+  section: CommerceSectionConfig,
+): boolean {
+  return sectionCategoryNameSet(section).has(normalize(categoryName));
 }
