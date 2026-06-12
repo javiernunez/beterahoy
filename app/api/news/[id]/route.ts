@@ -58,6 +58,8 @@ export async function PATCH(request: Request, { params }: Params) {
   const contentVal = body.contentVal != null ? String(body.contentVal).trim() || null : null;
   const summary = body.summary != null ? String(body.summary).trim() || null : null;
   const summaryVal = body.summaryVal != null ? String(body.summaryVal).trim() || null : null;
+  const instagramPost = body.instagramPost != null ? String(body.instagramPost).trim() || null : null;
+  const instagramPostVal = body.instagramPostVal != null ? String(body.instagramPostVal).trim() || null : null;
   const imageUrl = body.imageUrl ? String(body.imageUrl) : null;
   const categoryRaw = body.category != null ? String(body.category) : undefined;
   const category: ArticleCategory | undefined = categoryRaw
@@ -99,6 +101,8 @@ export async function PATCH(request: Request, { params }: Params) {
       contentVal,
       summary,
       summaryVal,
+      instagramPost,
+      instagramPostVal,
       imageUrl,
       ...(category !== undefined ? { category } : {}),
       ...(status !== undefined ? { status } : {}),

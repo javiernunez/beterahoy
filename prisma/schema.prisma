@@ -59,6 +59,9 @@ model Article {
   contentVal  String?
   summary     String?
   summaryVal  String?
+  /// Leyenda Instagram (solo admin; no se muestra en la web pública).
+  instagramPost    String?
+  instagramPostVal String?
   imageUrl    String?
   category    ArticleCategory @default(GENERAL)
   status      String          @default("published")

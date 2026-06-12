@@ -16,6 +16,8 @@ type AdminArticle = {
   contentVal: string | null;
   summary: string | null;
   summaryVal: string | null;
+  instagramPost: string | null;
+  instagramPostVal: string | null;
   imageUrl: string | null;
   category: string;
   status: string;
@@ -23,6 +25,54 @@ type AdminArticle = {
   publishedAt: Date;
   createdAt?: Date;
 };
+
+function CopyTextarea({
+  id,
+  name,
+  label,
+  defaultValue,
+  placeholder,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  defaultValue?: string;
+  placeholder: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function onCopy() {
+    const el = document.getElementById(id) as HTMLTextAreaElement | null;
+    const text = el?.value.trim() ?? "";
+    if (!text) return;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    globalThis.setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <label className="block text-sm text-slate-600">
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <span>{label}</span>
+        <button
+          type="button"
+          onClick={onCopy}
+          className="rounded border border-slate-300 px-2 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+        >
+          {copied ? "Copiado" : "Copiar"}
+        </button>
+      </div>
+      <textarea
+        id={id}
+        name={name}
+        rows={8}
+        defaultValue={defaultValue ?? ""}
+        placeholder={placeholder}
+        className="w-full rounded border border-slate-300 px-3 py-2 font-mono text-sm leading-relaxed"
+      />
+    </label>
+  );
+}
 
 const CATEGORY_OPTIONS = [
   { value: "GENERAL", label: "General" },
@@ -56,6 +106,8 @@ export function AdminNoticiaForm({ article }: Props) {
       contentVal: (form.get("contentVal") as string) || null,
       summary: (form.get("summary") as string) || null,
       summaryVal: (form.get("summaryVal") as string) || null,
+      instagramPost: (form.get("instagramPost") as string) || null,
+      instagramPostVal: (form.get("instagramPostVal") as string) || null,
       imageUrl: imageUrl.trim() || null,
       category: form.get("category") || "GENERAL",
       status: form.get("status") || "published",
@@ -143,6 +195,26 @@ export function AdminNoticiaForm({ article }: Props) {
             placeholder="Contingut VAL"
           />
           <AdminImageUpload name="imageUrl" value={imageUrl} onUrlChange={setImageUrl} />
+          <fieldset className="space-y-3 rounded-lg border border-dashed border-violet-200 bg-violet-50/40 p-4">
+            <legend className="px-1 text-sm font-semibold text-violet-900">Instagram (solo admin)</legend>
+            <p className="text-xs text-violet-800/80">
+              No se publica en la web. Pega aquí la leyenda lista para copiar y publicar en Instagram.
+            </p>
+            <CopyTextarea
+              id="instagramPost"
+              name="instagramPost"
+              label="Leyenda Instagram (CAST)"
+              defaultValue={article?.instagramPost ?? ""}
+              placeholder="Texto plano: emojis, viñetas, hashtags…"
+            />
+            <CopyTextarea
+              id="instagramPostVal"
+              name="instagramPostVal"
+              label="Llegenda Instagram (VAL)"
+              defaultValue={article?.instagramPostVal ?? ""}
+              placeholder="Text pla: emojis, vinyetes, hashtags…"
+            />
+          </fieldset>
           <div className="flex gap-2">
             <button type="submit" disabled={busy} className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
               {busy ? "Guardando..." : isEdit ? "Guardar cambios" : "Crear noticia"}

@@ -27,6 +27,8 @@ async function upsertOne(raw: any) {
   const titleVal = asOptionalString(raw?.titleVal);
   const summary = asOptionalString(raw?.summary);
   const summaryVal = asOptionalString(raw?.summaryVal);
+  const instagramPost = asOptionalString(raw?.instagramPost);
+  const instagramPostVal = asOptionalString(raw?.instagramPostVal);
   const content = String(raw?.content ?? "").trim();
   const contentVal = asOptionalString(raw?.contentVal);
   const imageUrl = asOptionalString(raw?.imageUrl);
@@ -48,6 +50,8 @@ async function upsertOne(raw: any) {
         titleVal,
         summary,
         summaryVal,
+        instagramPost,
+        instagramPostVal,
         content,
         contentVal,
         imageUrl,
@@ -66,6 +70,8 @@ async function upsertOne(raw: any) {
       slug,
       summary,
       summaryVal,
+      instagramPost,
+      instagramPostVal,
       content,
       contentVal,
       imageUrl,

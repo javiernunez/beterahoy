@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Props = {
   url: string;
@@ -8,11 +8,6 @@ type Props = {
   isVal: boolean;
   className?: string;
 };
-
-function buildSharePayload(title: string, url: string) {
-  const t = title.trim();
-  return `${t}\n${url}`;
-}
 
 /** País-style: título, doble salto, URL */
 function buildWhatsappText(title: string, url: string) {
@@ -77,39 +72,6 @@ function IconLinkedIn({ className = "h-[20px] w-[20px]" }: { className?: string 
   );
 }
 
-/** Gradiente único por instancia si hay varias barras en la página */
-function IconInstagramUnique({ id }: { id: string }) {
-  const gid = `igGrad-${id}`;
-  return (
-    <svg className="h-[22px] w-[22px]" viewBox="0 0 24 24" aria-hidden>
-      <defs>
-        <linearGradient id={gid} x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#FFDC80" />
-          <stop offset="25%" stopColor="#F77737" />
-          <stop offset="50%" stopColor="#E1306C" />
-          <stop offset="75%" stopColor="#C13584" />
-          <stop offset="100%" stopColor="#833AB4" />
-        </linearGradient>
-      </defs>
-      <path
-        fill={`url(#${gid})`}
-        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
-      />
-    </svg>
-  );
-}
-
-function IconTiktok({ className = "h-[20px] w-[20px]" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="currentColor"
-        d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"
-      />
-    </svg>
-  );
-}
-
 function IconLink({ className = "h-[20px] w-[20px]" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -121,8 +83,6 @@ function IconLink({ className = "h-[20px] w-[20px]" }: { className?: string }) {
 
 export function SharePlatformsRow({ url, title, isVal, className = "" }: Readonly<Props>) {
   const [copiedNotice, setCopiedNotice] = useState<string | null>(null);
-  const reactId = useId();
-  const instagramGradientStableId = `ig-${reactId.replace(/:/g, "")}`;
 
   const labels = useMemo(
     () => ({
@@ -132,12 +92,8 @@ export function SharePlatformsRow({ url, title, isVal, className = "" }: Readonl
       x: isVal ? "Comparteix a X" : "Compartir en X",
       bsky: isVal ? "Comparteix a Bluesky" : "Compartir en Bluesky",
       li: isVal ? "Comparteix a LinkedIn" : "Compartir en LinkedIn",
-      ig: isVal ? "Comparteix a Instagram" : "Compartir en Instagram",
-      tt: isVal ? "Comparteix a TikTok" : "Compartir en TikTok",
       copy: isVal ? "Copiar enllaç" : "Copiar enlace",
       copiedUrl: isVal ? "Enllaç copiat al porta-retalls." : "Enlace copiado al portapapeles.",
-      copiedIg: isVal ? "Text copiat. Enganxa'l a Instagram." : "Copiado. Pégalo en Instagram.",
-      copiedTt: isVal ? "Text copiat. Enganxa'l a TikTok." : "Copiado. Pégalo en TikTok.",
       copyFail: isVal ? "No s'ha pogut copiar." : "No se pudo copiar.",
     }),
     [isVal],
@@ -158,33 +114,6 @@ export function SharePlatformsRow({ url, title, isVal, className = "" }: Readonl
   }).toString()}`;
   const bskyHref = `https://bsky.app/intent/compose?text=${encodeURIComponent(`${title.trim()}\n\n${url}`)}`;
   const liHref = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-
-  const shareOrCopy = useCallback(
-    async (which: "ig" | "tt") => {
-      const payload = buildSharePayload(title, url);
-
-      if (typeof navigator.share === "function") {
-        try {
-          await navigator.share({ title: title.trim(), text: payload, url });
-          return;
-        } catch (err) {
-          if (err instanceof Error && err.name === "AbortError") return;
-        }
-      }
-
-      try {
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(payload);
-          setCopiedNotice(which === "ig" ? labels.copiedIg : labels.copiedTt);
-          return;
-        }
-      } catch {
-        // fall through
-      }
-      setCopiedNotice(labels.copyFail);
-    },
-    [title, url, labels],
-  );
 
   const copyUrlOnly = useCallback(async () => {
     try {
@@ -217,12 +146,6 @@ export function SharePlatformsRow({ url, title, isVal, className = "" }: Readonl
         <a href={liHref} className={btnClass} target="_blank" rel="noreferrer noopener" aria-label={labels.li} data-share="linkedin">
           <IconLinkedIn />
         </a>
-        <button type="button" className={btnClass} aria-label={labels.ig} onClick={() => void shareOrCopy("ig")} data-share="instagram">
-          <IconInstagramUnique id={instagramGradientStableId} />
-        </button>
-        <button type="button" className={`${btnClass} text-black`} aria-label={labels.tt} onClick={() => void shareOrCopy("tt")} data-share="tiktok">
-          <IconTiktok />
-        </button>
         <button type="button" className={btnClass} aria-label={labels.copy} onClick={() => void copyUrlOnly()} data-share="copy">
           <IconLink />
         </button>

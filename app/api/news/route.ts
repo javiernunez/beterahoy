@@ -14,12 +14,19 @@ function coerceArticleStatus(raw: unknown): "draft" | "published" {
   return value === "draft" ? "draft" : "published";
 }
 
+function stripInternalArticleFields<T extends { instagramPost?: string | null; instagramPostVal?: string | null }>(
+  article: T,
+) {
+  const { instagramPost: _ip, instagramPostVal: _ipv, ...rest } = article;
+  return rest;
+}
+
 export async function GET() {
   const articles = await prisma.article.findMany({
     where: { status: "published" },
     orderBy: { publishedAt: "desc" },
   });
-  return NextResponse.json(articles);
+  return NextResponse.json(articles.map(stripInternalArticleFields));
 }
 
 export async function POST(request: Request) {
@@ -35,6 +42,8 @@ export async function POST(request: Request) {
   const contentVal = body.contentVal != null ? String(body.contentVal).trim() || null : null;
   const summary = body.summary != null ? String(body.summary).trim() || null : null;
   const summaryVal = body.summaryVal != null ? String(body.summaryVal).trim() || null : null;
+  const instagramPost = body.instagramPost != null ? String(body.instagramPost).trim() || null : null;
+  const instagramPostVal = body.instagramPostVal != null ? String(body.instagramPostVal).trim() || null : null;
   const imageUrl = body.imageUrl ? String(body.imageUrl) : null;
   const categoryRaw = String(body.category || "GENERAL");
   const category: ArticleCategory = isArticleCategory(categoryRaw) ? categoryRaw : "GENERAL";
@@ -63,6 +72,8 @@ export async function POST(request: Request) {
       contentVal,
       summary,
       summaryVal,
+      instagramPost,
+      instagramPostVal,
       imageUrl,
       category,
       status,
